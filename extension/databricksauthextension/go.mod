@@ -1,6 +1,6 @@
 module github.com/NixM0nk3y/aws-federated-databricks-otel-authenticator/extension/databricksauthextension
 
-go 1.25.0
+go 1.25.7
 
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.32.7
