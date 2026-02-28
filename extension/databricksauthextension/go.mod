@@ -1,4 +1,4 @@
-module github.com/NixM0nk3y/aws-federated-databricks-otel-authenticator/extension/databricksauthextension
+module github.com/NixM0nk3y/otel-collector-aws-databricks-auth/extension/databricksauthextension
 
 go 1.25.7
 
