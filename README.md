@@ -29,25 +29,23 @@ Tokens are cached and refreshed transparently (5 min before expiry by default). 
 
 ## Architecture
 
-```
-                    ┌─────────────────────────────────────────────────┐
-                    │           otelcol-databricks (custom binary)     │
-                    │                                                   │
- OTLP (gRPC/HTTP)  │  ┌──────────┐   ┌───────────┐   ┌────────────┐  │   OTLP/HTTP
-──────────────────►│  │ receiver │──►│ processor │──►│  exporter  │──┼──────────────► Databricks
-   :4317 / :4318   │  │  (otlp)  │   │  (batch)  │   │ (otlphttp) │  │  /api/2.0/otel
-                   │  └──────────┘   └───────────┘   └─────┬──────┘  │
-                   │                                        │ auth    │
-                   │                               ┌────────▼───────┐ │
-                   │                               │ databricksauth │ │
-                   │                               │  extension     │ │
-                   │                               │                │ │
-                   │                               │ RoundTripper   │ │
-                   │                               │ injects:       │ │
-                   │                               │ Authorization: │ │
-                   │                               │ Bearer <token> │ │
-                   │                               └────────────────┘ │
-                   └─────────────────────────────────────────────────-┘
+```mermaid
+flowchart LR
+    client(["OTel SDK client<br/>:4317 / :4318"])
+
+    subgraph collector["otelcol-databricks (custom binary)"]
+        receiver["receiver<br/>(otlp)"]
+        processor["processor<br/>(batch)"]
+        exporter["exporter<br/>(otlphttp)"]
+        auth["databricksauth extension<br/>─────────────────────<br/>RoundTripper wraps transport<br/>Authorization: Bearer &lt;token&gt;"]
+
+        receiver --> processor --> exporter --> auth
+    end
+
+    databricks(["Databricks<br/>/api/2.0/otel"])
+
+    client -->|"OTLP gRPC/HTTP"| receiver
+    auth -->|"OTLP/HTTP"| databricks
 ```
 
 ### Extension: `databricksauth`
