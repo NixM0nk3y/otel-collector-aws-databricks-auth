@@ -1,0 +1,24 @@
+dist:
+  name: otelcol-databricks
+  description: Databricks OpenTelemetry Collector
+  output_path: ./dist
+  otelcol_version: "0.146.0"
+  module: github.com/rivian/aws-federated-databricks-otel-authenticator
+
+extensions:
+  - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.146.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.146.0
+  - gomod: github.com/rivian/aws-federated-databricks-otel-authenticator/extension/databricksauthextension v0.1.0
+    path: ./extension/databricksauthextension
+
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.146.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.146.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.146.0
+
+processors:
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.146.0
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.146.0
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.146.0

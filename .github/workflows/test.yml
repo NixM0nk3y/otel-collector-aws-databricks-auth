@@ -1,0 +1,121 @@
+name: Test Suite
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run with debug logging"
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: extension/databricksauthextension
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: extension/databricksauthextension/go.mod
+          cache-dependency-path: extension/databricksauthextension/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run staticcheck
+        uses: dominikh/staticcheck-action@v1
+        with:
+          version: "latest"
+          install-go: false
+          working-directory: extension/databricksauthextension
+
+      - name: Run tests
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: extension/databricksauthextension/coverage.out
+          flags: unittests
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Display coverage summary
+        run: go tool cover -func=coverage.out
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: extension/databricksauthextension
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: extension/databricksauthextension/go.mod
+          cache-dependency-path: extension/databricksauthextension/go.sum
+
+      - name: Build
+        run: go build ./...
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: extension/databricksauthextension
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: extension/databricksauthextension/go.mod
+          cache-dependency-path: extension/databricksauthextension/go.sum
+
+      - name: Run Gosec Security Scanner
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@v2.22.10
+          gosec -no-fail -fmt sarif -out gosec-results.sarif ./...
+
+      - name: Run govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...

@@ -1,0 +1,65 @@
+extensions:
+  databricksauth:
+    workspace_url: "https://${env:DATABRICKS_HOST}"
+    sp_client_id: "${env:DATABRICKS_SP_CLIENT_ID}"
+    expiry_buffer: 5m
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  # Local debug — keep visibility into what is being forwarded
+  debug:
+    verbosity: detailed
+
+  # Each signal type requires a separate exporter because the
+  # X-Databricks-UC-Table-Name header value differs per signal.
+  # The otlphttp exporter appends /v1/traces|metrics|logs to the base endpoint.
+
+  otlphttp/databricks_traces:
+    endpoint: "https://${env:DATABRICKS_HOST}/api/2.0/otel"
+    auth:
+      authenticator: databricksauth
+    headers:
+      X-Databricks-UC-Table-Name: "${env:DATABRICKS_UC_CATALOG}.${env:DATABRICKS_UC_SCHEMA}.${env:DATABRICKS_UC_TABLE_PREFIX}_otel_spans"
+
+  otlphttp/databricks_metrics:
+    endpoint: "https://${env:DATABRICKS_HOST}/api/2.0/otel"
+    auth:
+      authenticator: databricksauth
+    headers:
+      X-Databricks-UC-Table-Name: "${env:DATABRICKS_UC_CATALOG}.${env:DATABRICKS_UC_SCHEMA}.${env:DATABRICKS_UC_TABLE_PREFIX}_otel_metrics"
+
+  otlphttp/databricks_logs:
+    endpoint: "https://${env:DATABRICKS_HOST}/api/2.0/otel"
+    auth:
+      authenticator: databricksauth
+    headers:
+      X-Databricks-UC-Table-Name: "${env:DATABRICKS_UC_CATALOG}.${env:DATABRICKS_UC_SCHEMA}.${env:DATABRICKS_UC_TABLE_PREFIX}_otel_logs"
+
+service:
+  extensions: [databricksauth]
+  telemetry:
+    logs:
+      level: "info"
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/databricks_traces]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/databricks_metrics]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/databricks_logs]

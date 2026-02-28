@@ -1,0 +1,12 @@
+#
+.devcontainer
+
+#
+tmp
+coverage.out
+
+# built collector artifacts
+dist
+
+# local secrets
+.env
