@@ -61,12 +61,12 @@ func TestRoundTripper_FederationMode(t *testing.T) {
 
 	ext := newExt(&Config{
 		SPClientID:   "client-id",
-		WorkspaceURL: "https://adb-123.azuredatabricks.net",
+		WorkspaceURL: "https://adb-123.cloud.databricks.com",
 	})
 
 	// Inject a pre-populated cache so no real AWS/OIDC calls are made.
 	ext.cache = &tokenCache{
-		workspaceURL: "https://adb-123.azuredatabricks.net",
+		workspaceURL: "https://adb-123.cloud.databricks.com",
 		spClientID:   "client-id",
 		expiryBuffer: 5 * time.Minute,
 		awsProvider:  &mockAWSTokenProvider{token: "aws-tok"},
@@ -97,7 +97,7 @@ func TestRoundTripper_FederationMode(t *testing.T) {
 func TestRoundTripper_PropagatesGetTokenError(t *testing.T) {
 	ext := newExt(&Config{
 		SPClientID:   "client-id",
-		WorkspaceURL: "https://adb-123.azuredatabricks.net",
+		WorkspaceURL: "https://adb-123.cloud.databricks.com",
 	})
 
 	// Use a provider that always fails so exchangeToken will error.
@@ -149,7 +149,7 @@ func TestShutdown(t *testing.T) {
 func TestStart_FederationMode(t *testing.T) {
 	ext := newExt(&Config{
 		SPClientID:   "client-id",
-		WorkspaceURL: "https://adb-123.azuredatabricks.net",
+		WorkspaceURL: "https://adb-123.cloud.databricks.com",
 	})
 	if err := ext.Start(context.Background(), nil); err != nil {
 		t.Fatalf("Start: %v", err)
@@ -169,7 +169,7 @@ func TestStart_FederationMode_AWSError(t *testing.T) {
 
 	ext := newExt(&Config{
 		SPClientID:   "client-id",
-		WorkspaceURL: "https://adb-123.azuredatabricks.net",
+		WorkspaceURL: "https://adb-123.cloud.databricks.com",
 	})
 	if err := ext.Start(context.Background(), nil); err == nil {
 		t.Fatal("expected error when AWS provider fails, got nil")

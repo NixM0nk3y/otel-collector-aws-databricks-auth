@@ -3,12 +3,12 @@ dist:
   description: Databricks OpenTelemetry Collector
   output_path: ./dist
   otelcol_version: "0.146.0"
-  module: github.com/rivian/aws-federated-databricks-otel-authenticator
+  module: github.com/NixM0nk3y/otel-collector-aws-databricks-auth
 
 extensions:
   - gomod: go.opentelemetry.io/collector/extension/zpagesextension v0.146.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.146.0
-  - gomod: github.com/rivian/aws-federated-databricks-otel-authenticator/extension/databricksauthextension v0.1.0
+  - gomod: github.com/NixM0nk3y/otel-collector-aws-databricks-auth/extension/databricksauthextension v0.1.0
     path: ./extension/databricksauthextension
 
 exporters:

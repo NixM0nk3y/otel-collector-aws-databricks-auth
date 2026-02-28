@@ -13,7 +13,7 @@ type Config struct {
 	Token configopaque.String `mapstructure:"token"`
 
 	// Federation mode (AWS→Databricks).
-	WorkspaceURL string        `mapstructure:"workspace_url"` // e.g. https://adb-xxx.azuredatabricks.net
+	WorkspaceURL string        `mapstructure:"workspace_url"` // e.g. https://adb-xxx.cloud.databricks.com
 	SPClientID   string        `mapstructure:"sp_client_id"`  // Databricks SP OAuth app client ID
 	ExpiryBuffer time.Duration `mapstructure:"expiry_buffer"` // default: 5m
 }

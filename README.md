@@ -1,6 +1,6 @@
 # AWS Federated Databricks OTel Authenticator
 
-A custom OpenTelemetry Collector extension that provides AWS-federated authentication for forwarding telemetry to a [Databricks Unity Catalog OTLP endpoint](https://docs.databricks.com/en/observability/open-telemetry.html).
+A custom OpenTelemetry Collector extension that provides AWS-federated authentication for forwarding telemetry to a [Databricks Unity Catalog OTLP endpoint](https://docs.databricks.com/aws/en/mlflow3/genai/tracing/trace-unity-catalog.html).
 
 ## Overview
 
@@ -168,7 +168,7 @@ Tests cover config validation, token cache behaviour (cache hit, expiry, concurr
 extensions:
   databricksauth:
     # --- Federation mode (production) ---
-    workspace_url: "https://<workspace>.azuredatabricks.net"  # required with sp_client_id
+    workspace_url: "https://<workspace>.cloud.databricks.com"  # required with sp_client_id
     sp_client_id: "<databricks-sp-oauth-client-id>"           # Databricks SP OAuth app
     expiry_buffer: 5m                                         # refresh this long before expiry (default: 5m)
 
@@ -415,6 +415,8 @@ Required headers per request:
 
 - [OTel Collector Builder (ocb)](https://github.com/open-telemetry/opentelemetry-collector/tree/main/cmd/builder)
 - [Building a custom authenticator extension](https://opentelemetry.io/docs/collector/extend/custom-component/extension/authenticator/)
-- [Databricks OTel ingestion docs](https://docs.databricks.com/en/observability/open-telemetry.html)
+- [Store MLflow traces in Unity Catalog](https://docs.databricks.com/aws/en/mlflow3/genai/tracing/trace-unity-catalog.html) — UC table setup, OTLP ingestion, permissions
+- [OpenTelemetry export from MLflow](https://docs.databricks.com/aws/en/mlflow3/genai/tracing/integrations/open-telemetry) — OTLP exporter configuration
+- [Authorize service principal access with OAuth](https://docs.databricks.com/en/dev-tools/authentication-oauth.html) — OAuth 2.0 token exchange for service principals
 - [OAuth 2.0 Token Exchange (RFC 8693)](https://datatracker.ietf.org/doc/html/rfc8693)
 - [bearertokenauthextension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/bearertokenauthextension) — reference implementation

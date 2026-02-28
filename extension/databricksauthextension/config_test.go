@@ -25,12 +25,12 @@ func TestConfig_Validate(t *testing.T) {
 		},
 		{
 			name:    "sp_client_id and workspace_url",
-			cfg:     Config{SPClientID: "client-id", WorkspaceURL: "https://adb-123.azuredatabricks.net"},
+			cfg:     Config{SPClientID: "client-id", WorkspaceURL: "https://adb-123.cloud.databricks.com"},
 			wantErr: false,
 		},
 		{
 			name:    "both token and sp_client_id",
-			cfg:     Config{Token: "tok", SPClientID: "client-id", WorkspaceURL: "https://adb-123.azuredatabricks.net"},
+			cfg:     Config{Token: "tok", SPClientID: "client-id", WorkspaceURL: "https://adb-123.cloud.databricks.com"},
 			wantErr: true,
 		},
 		{
@@ -40,7 +40,7 @@ func TestConfig_Validate(t *testing.T) {
 		},
 		{
 			name:    "sp_client_id with empty expiry_buffer uses default",
-			cfg:     Config{SPClientID: "client-id", WorkspaceURL: "https://adb-123.azuredatabricks.net"},
+			cfg:     Config{SPClientID: "client-id", WorkspaceURL: "https://adb-123.cloud.databricks.com"},
 			wantErr: false,
 		},
 	}
